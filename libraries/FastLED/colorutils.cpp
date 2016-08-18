@@ -47,6 +47,20 @@ void fill_rainbow( struct CRGB * pFirstLED, int numToFill,
     }
 }
 
+void fill_rainbow_reverse( struct CRGB * pFirstLED, int numToFill,
+                  uint8_t initialhue,
+                  uint8_t deltahue )
+{
+    CHSV hsv;
+    hsv.hue = initialhue;
+    hsv.val = 255;
+    hsv.sat = 240;
+    for( int i = numToFill - 1; i >= 0; i--) {
+        pFirstLED[i] = hsv;
+        hsv.hue += deltahue;
+    }
+}
+
 void fill_rainbow( struct CHSV * targetArray, int numToFill,
                   uint8_t initialhue,
                   uint8_t deltahue )

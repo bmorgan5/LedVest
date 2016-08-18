@@ -30,6 +30,11 @@ void fill_rainbow( struct CRGB * pFirstLED, int numToFill,
                    uint8_t initialhue,
                    uint8_t deltahue = 5);
 
+
+void fill_rainbow_reverse( struct CRGB * pFirstLED, int numToFill,
+                   uint8_t initialhue,
+                   uint8_t deltahue = 5);
+
 /// fill_rainbow - fill a range of LEDs with a rainbow of colors, at
 ///                full saturation and full value (brightness)
 void fill_rainbow( struct CHSV * targetArray, int numToFill,

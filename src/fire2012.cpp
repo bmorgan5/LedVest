@@ -1,10 +1,6 @@
 #include "vest.h"
-#include "fire2012.h"
 
 extern CRGB leds[NUM_LEDS];
-
-#define BRIGHTNESS  200
-#define FRAMES_PER_SECOND 60
 
 bool gReverseDirection = false;
 
@@ -80,12 +76,6 @@ void Fire2012()
       }
       leds[pixelnumber] = color;
     }
-}
-
-void setup_fire() {
-  delay(3000); // sanity delay
-  FastLED.addLeds<CHIPSET, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
-  FastLED.setBrightness( BRIGHTNESS );
 }
 
 void loop_fire()
