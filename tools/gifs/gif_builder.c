@@ -180,25 +180,37 @@ int read_gif_literal(GifFileType* gifFile, GifByteType* buf, int count)
 	return bytes_read;
 }
 
-int test_nyan_cat()
+GifFileType* slurpGifLiteral(GifByteType* gif_bytes)
 {
-	int	i, ErrorCode;
-    GifFileType *GifFileIn, *GifFileOut = (GifFileType *)NULL;
+	int	ErrorCode;
+    GifFileType *GifFileIn;
 
-	GifLiteral nyan_cat = {
-		.bytes = nyan_cat_bytes,
-		.size = sizeof(nyan_cat_bytes),
+	GifLiteral gifLiteral = {
+		.bytes = gif_bytes,
+		.size = sizeof(gif_bytes),
 		.cursor = 0
 	};
 
-    if ((GifFileIn = DGifOpen(&nyan_cat, read_gif_literal, &ErrorCode)) == NULL) {
+    if ((GifFileIn = DGifOpen(&gifLiteral, read_gif_literal, &ErrorCode)) == NULL) {
     	PrintGifError(ErrorCode);
     	exit(EXIT_FAILURE);
     }
+
     if (DGifSlurp(GifFileIn) == GIF_ERROR) {
     	PrintGifError(GifFileIn->Error);
     	exit(EXIT_FAILURE);
     }
+
+    return GifFileIn
+}
+
+int build_nyan_cat()
+{
+	int	i, ErrorCode;
+    GifFileType *GifFileIn, *GifFileOut = (GifFileType *)NULL;
+
+    GifFileIn = slurpGifLiteral(nyan_cat_bytes);
+	
     if ((GifFileOut = EGifOpenFileName("nyan_cat_test.gif", false, &ErrorCode)) == NULL) {
     	PrintGifError(ErrorCode);
     	exit(EXIT_FAILURE);
@@ -241,11 +253,51 @@ int test_nyan_cat()
 
 }
 
+int build_bm2016() {
+	/*
+    * Your operations on in-core structures go here.  
+    * This code just copies the header and each image from the incoming file.
+    */
 
+    char bm2016[] = "BM 2016";
+
+    GifFileOut->SWidth = strlen(bm2016);
+    GifFileOut->SHeight = GIF_FONT_HEIGHT;
+    
+    GifFileOut->SColorResolution = GifFileIn->SColorResolution;
+    GifFileOut->SBackGroundColor = GifFileIn->SBackGroundColor;
+    if (GifFileIn->SColorMap) {
+		GifFileOut->SColorMap = GifMakeMapObject(
+				   GifFileIn->SColorMap->ColorCount,
+				   GifFileIn->SColorMap->Colors);
+    } else {
+		GifFileOut->SColorMap = NULL;
+    }
+
+    for (i = 0; i < GifFileIn->ImageCount; i++)
+		(void) GifMakeSavedImage(GifFileOut, &GifFileIn->SavedImages[i]);
+
+    /*
+     * Note: don't do DGifCloseFile early, as this will
+     * deallocate all the memory containing the GIF data!
+     *
+     * Further note: EGifSpew() doesn't try to validity-check any of this
+     * data; it's *your* responsibility to keep your changes consistent.
+     * Caveat hacker!
+     */
+    if (EGifSpew(GifFileOut) == GIF_ERROR)
+		PrintGifError(GifFileOut->Error);
+
+    if (DGifCloseFile(GifFileIn, &ErrorCode) == GIF_ERROR)
+		PrintGifError(ErrorCode);
+
+    return 0;
+
+}
 
 
 
 int main(int argc, char* argv[])
 {
-	return test_nyan_cat();
+	return build_nyan_cat();
 }
