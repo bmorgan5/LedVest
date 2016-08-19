@@ -1,5 +1,4 @@
 #include "vest.h"
-#include "gif_lib.h"
 #include "gifs.h"
 
 GifByteType nyan_cat_bytes[] = 
@@ -46,15 +45,7 @@ GifByteType nyan_cat_bytes[] =
 	0x89,0x4e,0x8b,0x81,0x25,0x7c,0x85,0x44,0x77,0x12,0x11,0x00,0x3b
 };
 
-typedef struct GifLiteral {
-	GifByteType* bytes;
-	int size;
-	int cursor; // Points to the first unread byte (should be initialized to 0)
-} GifLiteral;
-
-
 extern CRGB leds[NUM_LEDS];
-
 
 static void nyan_loop() {
 	FastLED.show();
@@ -103,10 +94,10 @@ void nyan_cat()
 			{
 				uint16_t pixel = img->RasterBits[p];
 				if(pixel >= img->ImageDesc.ColorMap->ColorCount) {       //Pixel is outside pallette range		
-					leds[rasterToMatrix(p)] = CRGB::White;
+					leds[R(p)] = CRGB::White;
 				} else {
 					GifColorType c = colors[pixel];
-					leds[rasterToMatrix(p)] = CRGB(c.Red,c.Green,c.Blue);
+					leds[R(p)] = CRGB(c.Red,c.Green,c.Blue);
 				}
 			}
 
