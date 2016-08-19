@@ -6,12 +6,13 @@
 
 TARGET = gif_builder
 
-CFLAGS = -O2 -Wall -I/usr/local/include -L/usr/local/lib
+CFLAGS = -O2 -Wall
+LDFLAGS = -L/usr/local/lib -lgif
 
-CC = gcc
+CC = /usr/bin/gcc
 
 SOURCES = gif_builder.c
 
 $(TARGET): $(SOURCES)
 	@echo "[CC] $<"
-	@$(CC) $(CFLAGS) $(SOURCES) -o "$@" -c gif_builder.o
+	@$(CC) $(CFLAGS) $(SOURCES) -o "$@" $(LDFLAGS)

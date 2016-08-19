@@ -157,102 +157,41 @@ void PrintGifError(int ErrorCode) {
 }
 
 
-// typedef struct GifLiteral {
-// 	GifByteType* bytes;
-// 	int size;
-// 	int cursor; // Points to the first unread byte (should be initialized to 0)
-// } GifLiteral;
+typedef struct GifLiteral {
+	GifByteType* bytes;
+	int size;
+	int cursor; // Points to the first unread byte (should be initialized to 0)
+} GifLiteral;
 
-// int read_gif_literal(GifFileType* gifFile, GifByteType* buf, int count)
-// {	
+int read_gif_literal(GifFileType* gifFile, GifByteType* buf, int count)
+{	
 
-// 	GifLiteral* gl = (GifLiteral*) gifFile->UserData;
+	GifLiteral* gl = (GifLiteral*) gifFile->UserData;
 
-// 	int bytes_read = MIN(count, gl->size - gl->cursor);
+	int bytes_read = MIN(count, gl->size - gl->cursor);
 
-// 	memcpy(buf, &gl->bytes[gl->cursor], bytes_read);
+	memcpy(buf, &gl->bytes[gl->cursor], bytes_read);
 
-// 	gl->cursor += bytes_read;
+	gl->cursor += bytes_read;
 
-// 	if(gl->cursor >= gl->size)
-// 		gl->cursor = 0; //Reset cursor to beginning of file
+	if(gl->cursor >= gl->size)
+		gl->cursor = 0; //Reset cursor to beginning of file
 
-// 	return bytes_read;
-// }
+	return bytes_read;
+}
 
-// int test_nyan_cat()
-// {
-// 	int	i, ErrorCode;
-//     GifFileType *GifFileIn, *GifFileOut = (GifFileType *)NULL;
-
-// 	GifLiteral nyan_cat = {
-// 		.bytes = nyan_cat_bytes,
-// 		.size = sizeof(nyan_cat_bytes),
-// 		.cursor = 0
-// 	};
-
-//     if ((GifFileIn = DGifOpen(&nyan_cat, read_gif_literal, &ErrorCode)) == NULL) {
-//     	PrintGifError(ErrorCode);
-//     	exit(EXIT_FAILURE);
-//     }
-//     if (DGifSlurp(GifFileIn) == GIF_ERROR) {
-//     	PrintGifError(GifFileIn->Error);
-//     	exit(EXIT_FAILURE);
-//     }
-//     if ((GifFileOut = EGifOpenFileName("nyan_cat_test.gif", false, &ErrorCode)) == NULL) {
-//     	PrintGifError(ErrorCode);
-//     	exit(EXIT_FAILURE);
-//     }
-
-//     /*
-//      * Your operations on in-core structures go here.  
-//      * This code just copies the header and each image from the incoming file.
-//      */
-//     GifFileOut->SWidth = GifFileIn->SWidth;
-//     GifFileOut->SHeight = GifFileIn->SHeight;
-//     GifFileOut->SColorResolution = GifFileIn->SColorResolution;
-//     GifFileOut->SBackGroundColor = GifFileIn->SBackGroundColor;
-//     if (GifFileIn->SColorMap) {
-// 		GifFileOut->SColorMap = GifMakeMapObject(
-// 				   GifFileIn->SColorMap->ColorCount,
-// 				   GifFileIn->SColorMap->Colors);
-//     } else {
-// 		GifFileOut->SColorMap = NULL;
-//     }
-
-//     for (i = 0; i < GifFileIn->ImageCount; i++)
-// 		(void) GifMakeSavedImage(GifFileOut, &GifFileIn->SavedImages[i]);
-
-//     /*
-//      * Note: don't do DGifCloseFile early, as this will
-//      * deallocate all the memory containing the GIF data!
-//      *
-//      * Further note: EGifSpew() doesn't try to validity-check any of this
-//      * data; it's *your* responsibility to keep your changes consistent.
-//      * Caveat hacker!
-//      */
-//     if (EGifSpew(GifFileOut) == GIF_ERROR)
-// 		PrintGifError(GifFileOut->Error);
-
-//     if (DGifCloseFile(GifFileIn, &ErrorCode) == GIF_ERROR)
-// 		PrintGifError(ErrorCode);
-
-//     return 0;
-
-// }
-
-
-
-
-
-int main(int argc, char* argv[])
+int test_nyan_cat()
 {
-
-
-    int	i = 0, ErrorCode;
+	int	i, ErrorCode;
     GifFileType *GifFileIn, *GifFileOut = (GifFileType *)NULL;
 
-    if ((GifFileIn = DGifOpenFileHandle(0, &ErrorCode)) == NULL) {
+	GifLiteral nyan_cat = {
+		.bytes = nyan_cat_bytes,
+		.size = sizeof(nyan_cat_bytes),
+		.cursor = 0
+	};
+
+    if ((GifFileIn = DGifOpen(&nyan_cat, read_gif_literal, &ErrorCode)) == NULL) {
     	PrintGifError(ErrorCode);
     	exit(EXIT_FAILURE);
     }
@@ -260,11 +199,53 @@ int main(int argc, char* argv[])
     	PrintGifError(GifFileIn->Error);
     	exit(EXIT_FAILURE);
     }
-    if ((GifFileOut = EGifOpenFileHandle(1, &ErrorCode)) == NULL) {
+    if ((GifFileOut = EGifOpenFileName("nyan_cat_test.gif", false, &ErrorCode)) == NULL) {
     	PrintGifError(ErrorCode);
     	exit(EXIT_FAILURE);
     }
 
-    return i;
-	// return test_nyan_cat();
+    /*
+     * Your operations on in-core structures go here.  
+     * This code just copies the header and each image from the incoming file.
+     */
+    GifFileOut->SWidth = GifFileIn->SWidth;
+    GifFileOut->SHeight = GifFileIn->SHeight;
+    GifFileOut->SColorResolution = GifFileIn->SColorResolution;
+    GifFileOut->SBackGroundColor = GifFileIn->SBackGroundColor;
+    if (GifFileIn->SColorMap) {
+		GifFileOut->SColorMap = GifMakeMapObject(
+				   GifFileIn->SColorMap->ColorCount,
+				   GifFileIn->SColorMap->Colors);
+    } else {
+		GifFileOut->SColorMap = NULL;
+    }
+
+    for (i = 0; i < GifFileIn->ImageCount; i++)
+		(void) GifMakeSavedImage(GifFileOut, &GifFileIn->SavedImages[i]);
+
+    /*
+     * Note: don't do DGifCloseFile early, as this will
+     * deallocate all the memory containing the GIF data!
+     *
+     * Further note: EGifSpew() doesn't try to validity-check any of this
+     * data; it's *your* responsibility to keep your changes consistent.
+     * Caveat hacker!
+     */
+    if (EGifSpew(GifFileOut) == GIF_ERROR)
+		PrintGifError(GifFileOut->Error);
+
+    if (DGifCloseFile(GifFileIn, &ErrorCode) == GIF_ERROR)
+		PrintGifError(ErrorCode);
+
+    return 0;
+
+}
+
+
+
+
+
+int main(int argc, char* argv[])
+{
+	return test_nyan_cat();
 }
