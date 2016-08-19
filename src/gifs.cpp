@@ -1,3 +1,5 @@
+#include "vest.h"
+#include "gifs.h"
 
 int read_gif_literal(GifFileType* gifFile, GifByteType* buf, int count)
 {	
