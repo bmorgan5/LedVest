@@ -24,10 +24,11 @@ uint16_t XY( uint8_t x, uint8_t y)
 }
 
 // This function corrects snaked column directions
-uint16_t rasterToMatrix(uint16_t i)
+uint16_t R(uint16_t i)
 {
-  uint8_t y = i / HEIGHT;
-  uint8_t x = i % HEIGHT;
+
+  uint8_t y = i / WIDTH;
+  uint8_t x = i % WIDTH;
 
   return XY(x,y);
 }
