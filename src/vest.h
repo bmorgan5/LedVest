@@ -5,7 +5,7 @@
 #include <FastLED.h>
 #include "matrix.h"
 
-#define LED_PIN 12
+#define LED_PIN 5
 #define CHIPSET WS2812B
 #define COLOR_ORDER GRB
 

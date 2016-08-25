@@ -36,7 +36,7 @@ bool gReverseDirection = false;
 // COOLING: How much does the air cool as it rises?
 // Less cooling = taller flames.  More cooling = shorter flames.
 // Default 50, suggested range 20-100 
-#define COOLING  55
+#define COOLING  90
 
 // SPARKING: What chance (out of 255) is there that a new spark will be lit?
 // Higher chance = more roaring fire.  Lower chance = more flickery fire.

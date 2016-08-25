@@ -6,8 +6,8 @@
 
 TARGET = gif_builder
 
-CFLAGS = -O2 -Wall
-LDFLAGS = -L/usr/local/lib -lgif
+CFLAGS = -O2 -Wall -std=gnu99
+LDFLAGS = -L/usr/local/lib -lgif -L../../
 
 CC = /usr/bin/gcc
 
