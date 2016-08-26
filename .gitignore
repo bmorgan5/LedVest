@@ -1,6 +1,5 @@
-*.o
 *.d
 *.hex
 *.elf
+build/
 tools/gifs/gif_builder
-!tools/arm/lib/gcc/arm-none-eabi/4.8.4/
