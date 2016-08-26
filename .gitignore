@@ -3,3 +3,4 @@
 *.hex
 *.elf
 tools/gifs/gif_builder
+!tools/arm/lib/gcc/arm-none-eabi/4.8.4/
