@@ -6,6 +6,8 @@
 
 // #include "gifs.h"
 
+
+
 CRGB leds[NUM_LEDS];
 
 extern "C" 
@@ -30,6 +32,9 @@ void setup() {
 	FastLED.setBrightness( BRIGHTNESS );
 }
 
+
+
+
 int main(void)
 {
 	setup();
@@ -37,8 +42,8 @@ int main(void)
 	while(1){
 		// off(1);
 
-		// bm_logo();
-		test_rainbow_palette();
+		bm_logo();
+		// test_rainbow_palette();
 
 		// nyan_cat();		
 		// loop_fire();

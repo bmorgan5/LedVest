@@ -1,6 +1,6 @@
 #include "vest.h"
 #include "gifs.h"
-
+#include "effects.h"
 
 GifByteType bm_logo_bytes[] = 
 {
@@ -80,56 +80,18 @@ GifByteType bm_logo_bytes[] =
 
 extern CRGB leds[NUM_LEDS];
 
-// COOLING: How much does the air cool as it rises?
-// Less cooling = taller flames.  More cooling = shorter flames.
-// Default 50, suggested range 20-100 
-#define COOLING  127
-
-// SPARKING: What chance (out of 255) is there that a new spark will be lit?
-// Higher chance = more roaring fire.  Lower chance = more flickery fire.
-// Default 120, suggested range 50-200.
-#define SPARKING 255
-
-uint8_t heat[NUM_LEDS] = {0};
-
-#define FLAME_HEIGHT 12
-
-void fire_effect()
-{
-
-	for(uint8_t x = 0; x < WIDTH; x++){
-		// Step 1.  Cool down every cell a little
-		// for(uint8_t y = HEIGHT - 1 ; y >= HEIGHT-FLAME_HEIGHT; y--){
-		for(uint8_t f = 0; f < FLAME_HEIGHT; f++){
-			uint8_t y = (HEIGHT-1) - f;
-			// heat[XY(x,y)] = qsub8(heat[XY(x,y)],  random8(0, 4*(FLAME_HEIGHT-f)));
-			heat[XY(x,y)] = qsub8(heat[XY(x,y)],  random8(0, ((COOLING * 10) / (1 + (2*f))) + 2));
-
-		}
-
-		// Step 2.  Heat from each cell drifts 'up' and diffuses a little		
-		for( uint8_t y = HEIGHT - 3; y >= HEIGHT-FLAME_HEIGHT; y--) {
-			heat[XY(x,y)] = (heat[XY(x,y+1)] + heat[XY(x,y+2)] + heat[XY(x,y+2)]) / 10;
-		}
-
-		// Step 3.  Randomly ignite new 'sparks' of heat near the bottom
-		// if( random8() < SPARKING ) {
-			// uint8_t y = random8(HEIGHT-2, HEIGHT);
-			uint8_t y = HEIGHT-1;
-			heat[XY(x,y-1)] = qadd8(heat[XY(x,y-1)], random8(0,128));
-			heat[XY(x,y)] = qadd8(heat[XY(x,y)], random8(64,192));
-		// }
-
-		// Step 4.  Map from heat cells to LED colors
-		for( uint8_t y = HEIGHT - 1; y >= HEIGHT-FLAME_HEIGHT; y--) {
-			CRGB color = HeatColor(heat[XY(x,y)]);			
-			leds[XY(x,y)] = color;						
-		}
-	}
+int test(int x){
+	return x;
 }
 
-void bm_logo()
-{
+
+typedef void (*effect_ptr_t)(void);
+effect_ptr_t effects[] = {fire_effect};
+// effect_ptr_t current_effect = effects[0];
+
+// #define NUM_EFFECTS 1
+
+static GifFileType* load_bm_gif(){
 
 	GifLiteral bm_logo = {
 		.bytes = bm_logo_bytes,
@@ -138,50 +100,58 @@ void bm_logo()
 	};
 
 	int Error;
-	GifFileType* gifFile = DGifOpen(&bm_logo, read_gif_literal, &Error);
-	if(gifFile == NULL){		
-		leds[0] = CRGB::Red;
-		fail_loop();
-	}
-	Error = DGifSlurp(gifFile);
+	GifFileType* bm_gif = DGifOpen(&bm_logo, read_gif_literal, &Error);
+	// if(bm_gif == NULL){		
+	// 	leds[0] = CRGB::Red;
+	// 	fail_loop();
+	// }
 
-	if(Error != GIF_OK){
-		leds[(uint8_t)Error] = CRGB::Red;
-		fail_loop();
-	}
+	Error = DGifSlurp(bm_gif);
+	// if(Error != GIF_OK){
+	// 	leds[(uint8_t)Error] = CRGB::Red;
+	// 	fail_loop();
+	// }
+	return bm_gif;
+}
 
-	GifColorType* colors = gifFile->SColorMap->Colors;
-	uint8_t colorCount = gifFile->SColorMap->ColorCount;
+void bm_logo()
+{
+
+	GifFileType* bm_gif = load_bm_gif();
+
+	GifColorType* colors = bm_gif->SColorMap->Colors;
+	uint8_t colorCount = bm_gif->SColorMap->ColorCount;
 
 	uint16_t gif_delay = 250; // 250 ms
 	
-	// uint16_t num_pixels = img->ImageDesc.Width * img->ImageDesc.Height;
+	effect_ptr_t current_effect = effects[0];
 
 	while(1) {
 
-		for(uint8_t i = 0; i < gifFile->ImageCount; i++){
+		for(uint8_t i = 0; i < bm_gif->ImageCount; i++){
 
-			SavedImage* img = &gifFile->SavedImages[i];
+			SavedImage* img = &bm_gif->SavedImages[i];
 			if(img == NULL){
 				leds[2] = CRGB::Red;
 				fail_loop();
 			}
 
 			uint16_t effect_frames = FPS / (1000/gif_delay);
-			if(i == gifFile->ImageCount - 1){
+			if(i == bm_gif->ImageCount - 1){
 				effect_frames *= 4;
 			}
 
 			for(uint16_t f = 0; f < effect_frames; f++){
 				FastLED.clear();
-				fire_effect();
+				// fire_effect();
+				current_effect();
 				for(uint16_t p = 0; p < NUM_LEDS; p++)
 				{
 					GifByteType color_index = img->RasterBits[p];
 					GifColorType c = colors[img->RasterBits[p]];
 					if(!(c.Red == 0 && c.Green == 0 && c.Blue == 0)){
-						leds[R(p)] = CRGB(c.Red,c.Green,c.Blue);	
-					}				
+						leds[R(p)] = CRGB(c.Red,c.Green,c.Blue);
+					}		
 				}
 
 				FastLED.show();

@@ -25,6 +25,8 @@ void fail_loop() {
 	}
 }
 
+
+
 // void display_gif(GifByteType* bytes, int size){
 // 	GifLiteral gif_lit = {
 // 		.bytes = bytes,
