@@ -32,9 +32,6 @@ void setup() {
 	FastLED.setBrightness( BRIGHTNESS );
 }
 
-
-
-
 int main(void)
 {
 	setup();

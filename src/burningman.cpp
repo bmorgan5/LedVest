@@ -86,7 +86,13 @@ int test(int x){
 
 
 typedef void (*effect_ptr_t)(void);
-effect_ptr_t effects[] = {fire_effect};
+effect_ptr_t effects[] = 
+{
+	fire_effect,
+	camera_flash
+};
+#define NUM_EFFECTS 2
+
 // effect_ptr_t current_effect = effects[0];
 
 // #define NUM_EFFECTS 1
@@ -126,7 +132,18 @@ void bm_logo()
 	
 	effect_ptr_t current_effect = effects[0];
 
+	CHSV man_color(HUE_RED,255,255);
+
+	static uint32_t frame = 0;
+	static uint8_t effect_num = 0;
+
 	while(1) {
+		frame++;
+		if(frame % 2 == 0){
+			effect_num++;
+			if(effect_num == NUM_EFFECTS)
+				effect_num = 0;
+		}
 
 		for(uint8_t i = 0; i < bm_gif->ImageCount; i++){
 
@@ -144,27 +161,29 @@ void bm_logo()
 			for(uint16_t f = 0; f < effect_frames; f++){
 				FastLED.clear();
 				// fire_effect();
-				current_effect();
+				// current_effect();
+				effects[effect_num]();
+				if(current_effect == camera_flash){
+					man_color.h++;
+				}
+
+				// if(current_effect == camera_flash){
+
+				// }
+
 				for(uint16_t p = 0; p < NUM_LEDS; p++)
 				{
 					GifByteType color_index = img->RasterBits[p];
 					GifColorType c = colors[img->RasterBits[p]];
 					if(!(c.Red == 0 && c.Green == 0 && c.Blue == 0)){
-						leds[R(p)] = CRGB(c.Red,c.Green,c.Blue);
-					}		
+						// leds[R(p)] = CRGB(c.Red,c.Green,c.Blue);
+						leds[R(p)] = man_color;
+					}
 				}
 
 				FastLED.show();
 				FastLED.delay(1000/FPS);
 			}
 		}
-
-		// for(uint16_t f = 0; f < 2*effect_frames; f++){
-		// 	fire_effect();
-		// 	FastLED.show();
-		// 	FastLED.delay(1000/FPS);
-		// }
-
-		// FastLED.delay(3000);
 	}
 }
