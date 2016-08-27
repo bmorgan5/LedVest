@@ -163,13 +163,11 @@ void bm_logo()
 				// fire_effect();
 				// current_effect();
 				effects[effect_num]();
-				if(current_effect == camera_flash){
-					man_color.h++;
+				if(effects[effect_num] == camera_flash){
+					man_color.h++;					
+				} else {
+					man_color = CHSV(HUE_RED,255,255);
 				}
-
-				// if(current_effect == camera_flash){
-
-				// }
 
 				for(uint16_t p = 0; p < NUM_LEDS; p++)
 				{

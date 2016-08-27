@@ -119,3 +119,9 @@ void camera_flash()
 
 	frame++;
 }
+
+CRGB shade_bob_leds[NUM_LEDS];
+
+void shade_bob(){
+
+}
