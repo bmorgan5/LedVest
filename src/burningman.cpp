@@ -80,22 +80,14 @@ GifByteType bm_logo_bytes[] =
 
 extern CRGB leds[NUM_LEDS];
 
-int test(int x){
-	return x;
-}
-
-
 typedef void (*effect_ptr_t)(void);
 effect_ptr_t effects[] = 
 {
 	fire_effect,
-	camera_flash
+	camera_flash,
+	shade_bob
 };
-#define NUM_EFFECTS 2
-
-// effect_ptr_t current_effect = effects[0];
-
-// #define NUM_EFFECTS 1
+#define NUM_EFFECTS 3
 
 static GifFileType* load_bm_gif(){
 
@@ -120,6 +112,8 @@ static GifFileType* load_bm_gif(){
 	return bm_gif;
 }
 
+#define EFFECT_CYCLES 30
+
 void bm_logo()
 {
 
@@ -137,13 +131,13 @@ void bm_logo()
 	static uint32_t frame = 0;
 	static uint8_t effect_num = 0;
 
-	while(1) {
-		frame++;
-		if(frame % 2 == 0){
+	while(1) {	
+		if(frame % EFFECT_CYCLES == 0){
 			effect_num++;
 			if(effect_num == NUM_EFFECTS)
 				effect_num = 0;
 		}
+		frame++;
 
 		for(uint8_t i = 0; i < bm_gif->ImageCount; i++){
 
@@ -160,11 +154,11 @@ void bm_logo()
 
 			for(uint16_t f = 0; f < effect_frames; f++){
 				FastLED.clear();
-				// fire_effect();
-				// current_effect();
 				effects[effect_num]();
 				if(effects[effect_num] == camera_flash){
 					man_color.h++;					
+				} else if(effects[effect_num] == shade_bob){
+					man_color = CHSV(0,0,192);
 				} else {
 					man_color = CHSV(HUE_RED,255,255);
 				}

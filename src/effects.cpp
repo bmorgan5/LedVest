@@ -120,8 +120,74 @@ void camera_flash()
 	frame++;
 }
 
-CRGB shade_bob_leds[NUM_LEDS];
+uint8_t shade_bob_hues[WIDTH][HEIGHT];
+// uint8_t shade_bob_hues[HEIGHT][WIDTH];
 
-void shade_bob(){
+void set_bob_hue(int8_t x, int8_t y, uint8_t hue)
+{
+	if(x < 0) {
+		x = WIDTH - x;
+	}
 
+	if(y < 0){
+		y = HEIGHT - y;
+	}
+
+	shade_bob_hues[x % WIDTH][y % HEIGHT] = hue;
 }
+
+void shade_bob()
+{
+	static int8_t x = 0;
+	static int8_t dx = 1;
+
+	static int8_t y = 0;
+	static int8_t dy = 1;
+
+	static int8_t bob_hue = 0;
+
+	static int16_t rainbow_len = 4;
+
+	for(uint32_t c = 0; c < 4; c++){
+		set_bob_hue(x+0,y+0,bob_hue);
+		set_bob_hue(x+1,y+0,bob_hue);
+		set_bob_hue(x+2,y+0,bob_hue);
+		set_bob_hue(x+0,y+1,bob_hue);
+		set_bob_hue(x+1,y+1,bob_hue);
+		set_bob_hue(x+2,y+1,bob_hue);
+
+		// set_bob_hue((x-rainbow_len)+0,(y-rainbow_len)+0,0);
+		// set_bob_hue((x-rainbow_len)+1,(y-rainbow_len)+0,0);
+		// set_bob_hue((x-rainbow_len)+2,(y-rainbow_len)+0,0);
+		// set_bob_hue((x-rainbow_len)+0,(y-rainbow_len)+1,0);
+		// set_bob_hue((x-rainbow_len)+1,(y-rainbow_len)+1,0);
+		// set_bob_hue((x-rainbow_len)+2,(y-rainbow_len)+1,0);
+	 
+		x = (x + dx);
+		if(x == 0 || x == WIDTH-3)
+			dx = -dx;
+
+		y = (y + dy);
+		if(y == 0 || y == HEIGHT-2)
+			dy = -dy;
+		
+		bob_hue++;
+	}
+
+	
+	// x = (x + 1) % (WIDTH - 2);
+	// y = (y + 1) % (HEIGHT - 1);
+
+	//TODO: Check array bounds
+
+	for(uint8_t i = 0; i < WIDTH; i++){
+		for(uint8_t j = 0; j < HEIGHT; j++){
+			if(shade_bob_hues[i][j] % 27 > 13) {
+				leds[XY(i,j)] = CHSV(shade_bob_hues[i][j], 255, 128);
+			}
+
+		}
+	}
+}
+
+
