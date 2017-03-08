@@ -6,8 +6,7 @@ About
 
 I built a 25x24 pixel LED Vest to wear at Burningman 2016!
 
-[![LED Vest](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://youtu.be/wfAjaYMx2MA)
-
+[![LedVest](https://img.youtube.com/vi/wfAjaYMx2MA/0.jpg)](https://www.youtube.com/watch?v=wfAjaYMx2MA)
 
 Setup
 -----
