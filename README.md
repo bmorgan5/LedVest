@@ -8,6 +8,26 @@ I built a 25x24 pixel LED Vest to wear at Burningman 2016!
 
 [![LedVest](https://img.youtube.com/vi/wfAjaYMx2MA/0.jpg)](https://www.youtube.com/watch?v=wfAjaYMx2MA)
 
+Parts List
+----------
+
+[2x 300 WS2812B LED Strip] (https://www.amazon.com/gp/product/B018X04ES2/ref=oh_aui_detailpage_o08_s00?ie=UTF8&psc=1)
+
+[Teensy 3.2] (https://www.pjrc.com/store/teensy32.html)
+
+[2x RAVPower Battery Pack] (https://www.amazon.com/gp/product/B00HFMUBYG/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)
+
+[DROK Step Down Voltage Regulator] (https://www.amazon.com/gp/product/B00C4QVTNU/ref=oh_aui_detailpage_o04_s00?ie=UTF8&psc=1)
+
+[25mm Fan] (https://www.amazon.com/gp/product/B00MYNWUP4/ref=oh_aui_detailpage_o02_s00?ie=UTF8&psc=1)
+
+Optional Parts:
+
+For Testing at Home - [DROK Step Down Voltage Regulator with LED Voltage Display] (https://www.amazon.com/gp/product/B015Z02TE4/ref=oh_aui_detailpage_o00_s00?ie=UTF8&psc=1)
+
+For Charging in the Desert - [ALLPOWERS 18W Portable Solar Charger Panel] (https://www.amazon.com/gp/product/B00G6CDTGS/ref=oh_aui_detailpage_o05_s00?ie=UTF8&psc=1)
+
+
 Setup
 -----
 
